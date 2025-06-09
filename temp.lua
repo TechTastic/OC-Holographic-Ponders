@@ -1,5 +1,6 @@
 local component = require("component")
 local projector = component.hologram
+local serial = require("serialization")
 local nbt = require("nbt")
 local zzlib = require("zzlib")
 local args = {...}
@@ -12,7 +13,7 @@ local function convertSchematicToNBT(location)
     return nbt.readFromNBT(decompressed)
 end
 
-local function displayToHologram(schem)
+local function displayToHologram(schem, colorIndex)
     local width = schem.Schematic.Width
     local length = schem.Schematic.Length
     local height = schem.Schematic.Height
@@ -32,7 +33,7 @@ local function displayToHologram(schem)
                     local block = blocks[index]
 
                     if (block ~= 0) then
-                        byteData = byteData .. "\1"
+                        byteData = byteData .. string.char(colorIndex[block] or 1)
                     else
                         byteData = byteData .. "\0"
                     end
@@ -45,6 +46,13 @@ local function displayToHologram(schem)
 end
 
 local schemLocation = assert(args[1], "Missing '.schematic' file argument")
-assert(string.find(schemLocation, ".\.schematic"), "The first argument must be a '.schematic.' filetype")
+assert(string.find(schemLocation, ".schematic"), "The first argument must be a '.schematic.' filetype")
+
+local colorIndexToID = serial.unserialize(args[2] or "{}")
+
+for k,v in pairs(colorIndexToID) do
+    print("Block ID " .. tostring(k) .. " assigned color index " .. tostring(v))
+end
+
 local schem = convertSchematicToNBT(schemLocation)
-displayToHologram(schem)
+displayToHologram(schem, colorIndexToID)
