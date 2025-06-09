@@ -22,16 +22,20 @@ local function displayToHologram(schem)
 
     local byteData = ""
 
-    for y = 0, 32, 1 do
-        for z = 0, 48, 1 do
-            for x = 0, 48, 1 do
-                local index = ((y * length + z) * width + x) + 1
-                local block = blocks[index] or 0
-
-                if (block ~= 0) then
-                    byteData = byteData .. "\1"
-                else
+    for x = 0, 47, 1 do
+        for z = 0, 47, 1 do
+            for y = 0, 31, 1 do
+                if x >= width or y >= height or z >= length then
                     byteData = byteData .. "\0"
+                else
+                    local index = ((y * length + z) * width + x) + 1
+                    local block = blocks[index]
+
+                    if (block ~= 0) then
+                        byteData = byteData .. "\1"
+                    else
+                        byteData = byteData .. "\0"
+                    end
                 end
             end
         end
@@ -40,6 +44,7 @@ local function displayToHologram(schem)
     projector.setRaw(byteData)
 end
 
-local schemLocation = assert(args[1], "Missing .schematic file argument")
+local schemLocation = assert(args[1], "Missing '.schematic' file argument")
+assert(string.find(schemLocation, ".\.schematic"), "The first argument must be a '.schematic.' filetype")
 local schem = convertSchematicToNBT(schemLocation)
 displayToHologram(schem)
