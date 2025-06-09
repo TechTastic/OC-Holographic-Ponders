@@ -11,4 +11,4 @@ Libraries:
 
 [Original libnbt](https://github.com/OpenPrograms/Magik6k-Programs/blob/master/libnbt/nbt.lua)
 
-NOTE: Current version was edited by Gemini AI
+NOTE: Currently used `nbt.lua` version was edited by Gemini AI
